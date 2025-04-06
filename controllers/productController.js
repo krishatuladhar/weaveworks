@@ -22,7 +22,7 @@ const addProduct = async (req, res) => {
     const images = [image1, image2, image3, image4].filter(
       (item) => item !== undefined
     );
-
+   
     let imagesUrl = await Promise.all(
       images.map(async (item) => {
         let result = await cloudinary.uploader.upload(item.path, {
@@ -78,13 +78,13 @@ const removeProduct = async (req, res) => {
 
 // function for single product info
 const singleProduct = async (req, res) => {
-  try{
-    const {productId} = req.body
-    const product = await productModel.findById(productId)
-    res.json({success:true,product})
-}catch(error){
-    console.log(error);
-}
+   try{
+        const {productId} = req.body
+        const product = await productModel.findById(productId)
+        res.json({success:true,product})
+    }catch(error){
+        console.log(error);
+    }
 };
 
 export { listProducts, addProduct, removeProduct, singleProduct };
