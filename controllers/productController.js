@@ -1,7 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
 import productModel from "../models/productModel.js";
-
-// function for adding product
 const addProduct = async (req, res) => {
   try {
     const {
@@ -14,38 +12,39 @@ const addProduct = async (req, res) => {
       bestseller,
     } = req.body;
 
-    const image1 = req.files.image1 && req.files.image1[0];
-    const image2 = req.files.image2 && req.files.image2[0];
-    const image3 = req.files.image3 && req.files.image3[0];
-    const image4 = req.files.image4 && req.files.image4[0];
+    // Handling single image upload
+    const image = req.file; // Using req.file because it's a single image now
 
-    const images = [image1, image2, image3, image4].filter(
-      (item) => item !== undefined
-    );
-   
-    let imagesUrl = await Promise.all(
-      images.map(async (item) => {
-        let result = await cloudinary.uploader.upload(item.path, {
-          resource_type: "image",
-        });
-        return result.secure_url;
-      })
-    );
-    const productData= {
-      name,
-      description,
-      category,
-      price: Number(price),
-      subCategory,
-      bestseller: bestseller === "true" ? true : false,
-      sizes: JSON.parse(sizes),
-      image: imagesUrl,
-      date: Date.now()    
-  }
-  console.log(productData);
-  const product = new productModel(productData)
-  await product.save()
-    res.json({success:true,message: 'Product Added'});
+    if (image) {
+      // Upload to Cloudinary
+      const result = await cloudinary.uploader.upload(image.path, {
+        resource_type: "image",
+      });
+
+      // Getting the image URL from Cloudinary
+      const imageUrl = result.secure_url;
+
+      // Create product data
+      const productData = {
+        name,
+        description,
+        category,
+        price: Number(price),
+        subCategory,
+        bestseller: bestseller === "true" ? true : false,
+        sizes: JSON.parse(sizes),
+        image: imageUrl, // Single image URL
+        date: Date.now(),
+      };
+
+      // Save the product to the database
+      const product = new productModel(productData);
+      await product.save();
+
+      res.json({ success: true, message: "Product Added" });
+    } else {
+      res.json({ success: false, message: "No image provided" });
+    }
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: error.message });
