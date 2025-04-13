@@ -27,7 +27,7 @@ const placeOrder = async(req,res)=>{
     res.json({success:false,message:error.message})
 }
 }
-
+// const placeOrderEsewa = async (req,res) =>{}
 // All Orders data for admin panel
 const allOrders = async(req,res)=>{
   try{
