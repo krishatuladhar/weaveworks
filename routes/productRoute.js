@@ -11,7 +11,7 @@ const productRouter = express.Router();
 
 productRouter.post("/add", adminAuth, upload.single("image"), addProduct);
 
-productRouter.get("/remove", adminAuth, removeProduct);
+productRouter.post("/remove", adminAuth, removeProduct);
 productRouter.post("/single", singleProduct);
 productRouter.get("/list", listProducts);
 
